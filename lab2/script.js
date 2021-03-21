@@ -6,19 +6,27 @@ var level = 0;
 var second=10;
 var t = true;
 var idInt;
+var b=false;
+var cells;
+var arr;
 
 initGame(document.querySelector('#game'));
 
 
 function initGame(game){
-	
-
-	level++;
+	var size
+	//var arr;
+	if (localStorage.getItem("level") == null)
+	{
+		level++; size=2;
+	}
+	else {
+		level=localStorage.getItem("level");
+		size=localStorage.getItem("size");
+	}
 	levelgame(level);
 
 	var field = game.querySelector('.field');
-
-	var size = 2;
 
 
 
@@ -32,12 +40,12 @@ function initGame(game){
 	function newGame(){
 		
 		clear(field);
-		var cells = restgame(size,field);
-		func(cells,unic);
-		
+		cells = restgame(size,field);
+	//	arr={"level": level, "size": size};
+		func(unic);		
 	}
 
-	function func(cells,unic) {
+	function func(unic) {
 		
 		
 			for (var i = 0; i < cells.length; i++) {
@@ -45,11 +53,15 @@ function initGame(game){
 					
 					var thisColor = toHexColor(this.style.backgroundColor);
 
-					if(thisColor == unic){
+					if(thisColor == unic || b){
+						b=false;
 						size++;
 						level++;
+						//arr={"level": level, "size": size};
+						localStorage.setItem("level",JSON.stringify(level));
+						localStorage.setItem("size",JSON.stringify(size));
 						levelgame(level);
-						newGame();
+						newGame();						
 					}
 					else{
 						
@@ -57,16 +69,17 @@ function initGame(game){
 
 						size=2;
 						level = 1;
+						localStorage.setItem("level",JSON.stringify(level));
+						localStorage.setItem("size",JSON.stringify(size));
 						amt = 200;
 						dark = 20;
 						levelgame(level);
-
 						clearInterval(idInt);
 						doIt();
 						newGame();
 					}
 					
-				});
+				});				
 
 			}
 		
@@ -133,10 +146,15 @@ function initGame(game){
 	    });
 
 	}
+
 }
 
 
-
+function bot(){	
+	let event = new Event("click");
+	b=true;
+	cells[0].dispatchEvent(event);
+}
 function levelgame(level){
 	
 	let elem = document.getElementById('myhead');
